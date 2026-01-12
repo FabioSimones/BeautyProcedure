@@ -8,6 +8,8 @@ import com.devfabiosimones.beutique.utils.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -37,5 +39,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         return converterUtil.convertToTarget(newCustomerEntity);
 
+    }
+
+    @Override
+    public void delete(Long id) {
+        Optional<CustomerEntity> customerEntityOptional = customerRepository.findById(id);
+        if(customerEntityOptional.isEmpty()){
+            throw new RuntimeException("Customer not found.");
+        }
+        customerRepository.delete(customerEntityOptional.get());
     }
 }
