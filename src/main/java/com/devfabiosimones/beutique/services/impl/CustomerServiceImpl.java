@@ -8,6 +8,7 @@ import com.devfabiosimones.beutique.utils.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -48,5 +49,20 @@ public class CustomerServiceImpl implements CustomerService {
             throw new RuntimeException("Customer not found.");
         }
         customerRepository.delete(customerEntityOptional.get());
+    }
+
+    @Override
+    public CustomerDTO update(CustomerDTO customerDTO) {
+        Optional<CustomerEntity> customerEntityOptional = customerRepository.findById(customerDTO.getId());
+        if(customerEntityOptional.isEmpty()){
+            throw new RuntimeException("Customer not found.");
+        }
+        CustomerEntity customerEntity = converterUtil.convertToSource(customerDTO);
+
+        customerEntity.setAppointments(customerEntityOptional.get().getAppointments());
+        customerEntity.setCreatedAt(customerEntityOptional.get().getCreatedAt());
+        customerEntity.setUpdatedAt(LocalDateTime.now());
+
+        return converterUtil.convertToTarget(customerRepository.save(customerEntity));
     }
 }

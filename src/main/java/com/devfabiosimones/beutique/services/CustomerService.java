@@ -6,4 +6,5 @@ import com.devfabiosimones.beutique.entities.CustomerEntity;
 public interface CustomerService {
     CustomerDTO create(CustomerDTO customerDTO);
     void delete(Long id);
+    CustomerDTO update(CustomerDTO customerDTO);
 }
