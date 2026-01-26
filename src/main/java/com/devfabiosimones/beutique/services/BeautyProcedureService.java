@@ -5,4 +5,5 @@ import com.devfabiosimones.beutique.dtos.BeautyProcedureDTO;
 public interface BeautyProcedureService {
 
     BeautyProcedureDTO create(BeautyProcedureDTO beautyProcedureDTO);
+    void delete(Long id);
 }

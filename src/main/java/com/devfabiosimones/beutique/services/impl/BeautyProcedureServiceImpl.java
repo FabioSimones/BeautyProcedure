@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BeautyProcedureServiceImpl implements BeautyProcedureService {
 
@@ -24,5 +26,14 @@ public class BeautyProcedureServiceImpl implements BeautyProcedureService {
         BeautyProceduresEntity beautyProceduresEntity = converterUtil.convertToSource(beautyProcedureDTO);
         BeautyProceduresEntity newBeautyProceduresEntity = beautyProcedureRepository.save(beautyProceduresEntity);
         return converterUtil.convertToTarget(newBeautyProceduresEntity);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Optional<BeautyProceduresEntity> beautyProceduresEntity = beautyProcedureRepository.findById(id);
+        if (beautyProceduresEntity.isEmpty()){
+            throw new RuntimeException("Beauty procedure not found.");
+        }
+        beautyProcedureRepository.deleteById(id);
     }
 }
