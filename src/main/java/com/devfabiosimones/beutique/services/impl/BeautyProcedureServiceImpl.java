@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class BeautyProcedureServiceImpl implements BeautyProcedureService {
+
 
     @Autowired
     private BeautyProcedureRepository beautyProcedureRepository;
@@ -35,5 +37,21 @@ public class BeautyProcedureServiceImpl implements BeautyProcedureService {
             throw new RuntimeException("Beauty procedure not found.");
         }
         beautyProcedureRepository.deleteById(id);
+    }
+
+    @Override
+    public BeautyProcedureDTO update(BeautyProcedureDTO beautyProcedureDTO) {
+        Optional<BeautyProceduresEntity> beautyProceduresEntityOptional = beautyProcedureRepository.findById(beautyProcedureDTO.getId());
+
+        if(beautyProceduresEntityOptional.isEmpty()){
+            throw new RuntimeException("Beauty procedure not found.");
+        }
+
+        BeautyProceduresEntity beautyProceduresEntity = converterUtil.convertToSource(beautyProcedureDTO);
+        beautyProceduresEntity.setAppointments(beautyProceduresEntityOptional.get().getAppointments());
+        beautyProceduresEntity.setCreatedAt(beautyProceduresEntityOptional.get().getCreatedAt());
+        beautyProceduresEntity.setUpdatedAt(LocalDateTime.now());
+
+        return converterUtil.convertToTarget(beautyProcedureRepository.save(beautyProceduresEntity));
     }
 }
