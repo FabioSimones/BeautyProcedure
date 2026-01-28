@@ -8,6 +8,9 @@ import com.devfabiosimones.beutique.utils.ConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Service
 public class AppointmentsServiceImpl implements AppointmentsService {
 
@@ -26,7 +29,18 @@ public class AppointmentsServiceImpl implements AppointmentsService {
 
     @Override
     public AppointmentDTO update(AppointmentDTO appointmentDTO) {
-        return null;
+        Optional<AppointmentsEntity> currentAppointment = appointmentRepository.findById(appointmentDTO.getId());
+
+        if(currentAppointment.isEmpty()){
+            throw new RuntimeException("Appointment not found.");
+        }
+
+        AppointmentsEntity appointmentsEntity = converterUtil.convertToSource(appointmentDTO);
+        appointmentsEntity.setCreatedAt(currentAppointment.get().getCreatedAt());
+        appointmentsEntity.setUpdatedAt(LocalDateTime.now());
+        AppointmentsEntity updatedAppointmentEntity = appointmentRepository.save(appointmentsEntity);
+
+        return converterUtil.convertToTarget(updatedAppointmentEntity);
     }
 
     @Override
