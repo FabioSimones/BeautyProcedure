@@ -22,4 +22,10 @@ public class AppointmentController {
     ResponseEntity<AppointmentDTO> update(@RequestBody AppointmentDTO appointmentDTO){
         return ResponseEntity.ok(appointmentsService.update(appointmentDTO));
     }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> deleteById(@PathVariable Long id){
+        appointmentsService.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }
