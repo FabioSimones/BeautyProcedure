@@ -1,6 +1,9 @@
 package com.devfabiosimones.beutique.services.impl;
 
 import com.devfabiosimones.beutique.dtos.AppointmentDTO;
+import com.devfabiosimones.beutique.dtos.BeautyProcedureDTO;
+import com.devfabiosimones.beutique.dtos.CustomerDTO;
+import com.devfabiosimones.beutique.dtos.FullAppointmentDTO;
 import com.devfabiosimones.beutique.entities.AppointmentsEntity;
 import com.devfabiosimones.beutique.entities.BeautyProceduresEntity;
 import com.devfabiosimones.beutique.entities.CustomerEntity;
@@ -8,8 +11,10 @@ import com.devfabiosimones.beutique.repositories.AppointmentRepository;
 import com.devfabiosimones.beutique.repositories.BeautyProcedureRepository;
 import com.devfabiosimones.beutique.repositories.CustomerRepository;
 import com.devfabiosimones.beutique.services.AppointmentsService;
+import com.devfabiosimones.beutique.services.BrokerService;
 import com.devfabiosimones.beutique.utils.ConverterUtil;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +25,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AppointmentsServiceImpl implements AppointmentsService {
 
+    private final ModelMapper modelMapper = new ModelMapper();
+
     @Autowired
     private AppointmentRepository appointmentRepository;
 
@@ -29,6 +36,9 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private BrokerService brokerService;
+
     private final ConverterUtil<AppointmentsEntity, AppointmentDTO> converterUtil =
             new ConverterUtil<>(AppointmentsEntity.class, AppointmentDTO.class);
 
@@ -36,6 +46,7 @@ public class AppointmentsServiceImpl implements AppointmentsService {
     public AppointmentDTO create(AppointmentDTO appointmentDTO) {
         AppointmentsEntity appointmentsEntity = converterUtil.convertToSource(appointmentDTO);
         AppointmentsEntity newAppointmentEntity = appointmentRepository.save(appointmentsEntity);
+        sendAppointmentToQueue(newAppointmentEntity);
         return converterUtil.convertToTarget(newAppointmentEntity);
     }
 
@@ -51,6 +62,8 @@ public class AppointmentsServiceImpl implements AppointmentsService {
         appointmentsEntity.setCreatedAt(currentAppointment.get().getCreatedAt());
         appointmentsEntity.setUpdatedAt(LocalDateTime.now());
         AppointmentsEntity updatedAppointmentEntity = appointmentRepository.save(appointmentsEntity);
+
+        sendAppointmentToQueue(updatedAppointmentEntity);
 
         return converterUtil.convertToTarget(updatedAppointmentEntity);
     }
@@ -72,6 +85,9 @@ public class AppointmentsServiceImpl implements AppointmentsService {
         appointmentsEntity.setAppointmentsOpen(false);
 
         AppointmentsEntity updatedAppointmentEntity = appointmentRepository.save(appointmentsEntity);
+
+        sendAppointmentToQueue(updatedAppointmentEntity);
+
         return buildAppointmentsDTO(updatedAppointmentEntity);
     }
 
@@ -98,5 +114,23 @@ public class AppointmentsServiceImpl implements AppointmentsService {
                 .appointmentsOpen(appointmentsEntity.getAppointmentsOpen())
                 .customer(appointmentsEntity.getCustomer().getId())
                 .build();
+    }
+
+    private void sendAppointmentToQueue(AppointmentsEntity appointmentsEntity){
+        CustomerDTO customerDTO = appointmentsEntity.getCustomer()
+                != null ? modelMapper.map(appointmentsEntity.getCustomer(), CustomerDTO.class): null;
+
+        BeautyProcedureDTO beautyProcedureDTO = appointmentsEntity.getBeautyProcedure()
+                != null ? modelMapper.map(appointmentsEntity.getBeautyProcedure(), BeautyProcedureDTO.class): null;
+
+        FullAppointmentDTO fullAppointmentDTO = FullAppointmentDTO.builder()
+                .id(appointmentsEntity.getId())
+                .dateTime(appointmentsEntity.getDateTime())
+                .appointmentsOpen(appointmentsEntity.getAppointmentsOpen())
+                .customer(customerDTO)
+                .beautyProcedure(beautyProcedureDTO)
+                .build();
+
+        brokerService.send("appointments", fullAppointmentDTO);
     }
 }

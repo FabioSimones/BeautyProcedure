@@ -24,6 +24,11 @@ public class RabbitMQTopicConfig {
     }
 
     @Bean
+    public Queue appointmentQueue() {
+        return new Queue("appointmentQueue", true);
+    }
+
+    @Bean
     public Queue beautyProcedureQueue() {
         return new Queue("beautyProcedureQueue", true);
     }
@@ -42,5 +47,13 @@ public class RabbitMQTopicConfig {
             TopicExchange exchange
     ) {
         return BindingBuilder.bind(beautyProcedureQueue).to(exchange).with("beautyProcedures.#");
+    }
+
+    @Bean
+    public Binding bindingAppointment(
+            @Qualifier("appointmentQueue") Queue appointmentQueue,
+            TopicExchange exchange
+    ) {
+        return BindingBuilder.bind(appointmentQueue).to(exchange).with("appointments.#");
     }
 }
