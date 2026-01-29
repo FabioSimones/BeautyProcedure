@@ -4,6 +4,7 @@ import com.devfabiosimones.beutique.dtos.BeautyProcedureDTO;
 import com.devfabiosimones.beutique.entities.BeautyProceduresEntity;
 import com.devfabiosimones.beutique.repositories.BeautyProcedureRepository;
 import com.devfabiosimones.beutique.services.BeautyProcedureService;
+import com.devfabiosimones.beutique.services.BrokerService;
 import com.devfabiosimones.beutique.utils.ConverterUtil;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,9 @@ public class BeautyProcedureServiceImpl implements BeautyProcedureService {
     @Autowired
     private BeautyProcedureRepository beautyProcedureRepository;
 
+    @Autowired
+    private BrokerService brokerService;
+
     private final ConverterUtil<BeautyProceduresEntity, BeautyProcedureDTO> converterUtil =
             new ConverterUtil<>(BeautyProceduresEntity.class, BeautyProcedureDTO.class);
 
@@ -27,6 +31,7 @@ public class BeautyProcedureServiceImpl implements BeautyProcedureService {
     public BeautyProcedureDTO create(BeautyProcedureDTO beautyProcedureDTO) {
         BeautyProceduresEntity beautyProceduresEntity = converterUtil.convertToSource(beautyProcedureDTO);
         BeautyProceduresEntity newBeautyProceduresEntity = beautyProcedureRepository.save(beautyProceduresEntity);
+        sendBeautyProcedureToQueue(newBeautyProceduresEntity);
         return converterUtil.convertToTarget(newBeautyProceduresEntity);
     }
 
@@ -52,6 +57,21 @@ public class BeautyProcedureServiceImpl implements BeautyProcedureService {
         beautyProceduresEntity.setCreatedAt(beautyProceduresEntityOptional.get().getCreatedAt());
         beautyProceduresEntity.setUpdatedAt(LocalDateTime.now());
 
-        return converterUtil.convertToTarget(beautyProcedureRepository.save(beautyProceduresEntity));
+        BeautyProceduresEntity updatedBeautyProcedureEntity = beautyProcedureRepository.save(beautyProceduresEntity);
+
+        sendBeautyProcedureToQueue(updatedBeautyProcedureEntity);
+
+        return converterUtil.convertToTarget(updatedBeautyProcedureEntity);
+    }
+
+    private void sendBeautyProcedureToQueue(BeautyProceduresEntity beautyProceduresEntity){
+        BeautyProcedureDTO beautyProcedureDTO = BeautyProcedureDTO.builder()
+                .id(beautyProceduresEntity.getId())
+                .name(beautyProceduresEntity.getName())
+                .description(beautyProceduresEntity.getDescription())
+                .price(beautyProceduresEntity.getPrice())
+                .build();
+
+        brokerService.send("beautyProcedures", beautyProcedureDTO);
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,17 +14,33 @@ public class RabbitMQTopicConfig {
     public final String exchangeName = "beautiqueExchange";
 
     @Bean
-    TopicExchange exchange(){
+    public TopicExchange exchange() {
         return new TopicExchange(exchangeName);
     }
 
     @Bean
-    public Queue customerQueue(){
+    public Queue customerQueue() {
         return new Queue("customerQueue", true);
     }
 
     @Bean
-    Binding binding(Queue customerQueue, TopicExchange exchange){
+    public Queue beautyProcedureQueue() {
+        return new Queue("beautyProcedureQueue", true);
+    }
+
+    @Bean
+    public Binding bindingCustomer(
+            @Qualifier("customerQueue") Queue customerQueue,
+            TopicExchange exchange
+    ) {
         return BindingBuilder.bind(customerQueue).to(exchange).with("customer.#");
+    }
+
+    @Bean
+    public Binding bindingBeautyProcedure(
+            @Qualifier("beautyProcedureQueue") Queue beautyProcedureQueue,
+            TopicExchange exchange
+    ) {
+        return BindingBuilder.bind(beautyProcedureQueue).to(exchange).with("beautyProcedures.#");
     }
 }
