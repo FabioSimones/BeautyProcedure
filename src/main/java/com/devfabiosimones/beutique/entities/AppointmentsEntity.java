@@ -3,7 +3,6 @@ package com.devfabiosimones.beutique.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,7 +18,7 @@ public class AppointmentsEntity extends BaseEntity{
     private LocalDateTime dateTime;
 
     @Column(nullable = false)
-    private boolean appointmentsOpen;
+    private Boolean appointmentsOpen;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = true)
@@ -32,4 +31,5 @@ public class AppointmentsEntity extends BaseEntity{
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private BeautyProceduresEntity beautyProcedure;
+
 }

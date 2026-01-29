@@ -28,4 +28,9 @@ public class AppointmentController {
         appointmentsService.deleteById(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping
+    ResponseEntity<AppointmentDTO> setCustomerToAppointment(@RequestBody AppointmentDTO appointmentDTO){
+        return ResponseEntity.ok(appointmentsService.setCustomerToAppointment(appointmentDTO));
+    }
 }
