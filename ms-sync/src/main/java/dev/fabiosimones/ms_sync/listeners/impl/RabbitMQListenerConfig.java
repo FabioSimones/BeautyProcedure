@@ -1,6 +1,5 @@
 package dev.fabiosimones.ms_sync.listeners.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fabiosimones.ms_sync.dtos.appointments.AppointmentsDTO;
 import dev.fabiosimones.ms_sync.dtos.beautyprocedure.BeautyProcedureDTO;
 import dev.fabiosimones.ms_sync.dtos.customers.CustomerDTO;
@@ -10,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Configuration;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableRabbit
