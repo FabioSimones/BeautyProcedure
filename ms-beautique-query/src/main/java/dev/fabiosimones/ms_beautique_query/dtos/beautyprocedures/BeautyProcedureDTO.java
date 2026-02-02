@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "beautyprocedures")
+@Document(collection = "beauty_procedure")
 public class BeautyProcedureDTO {
     private Long id;
     private String name;
