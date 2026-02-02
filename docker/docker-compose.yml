@@ -29,18 +29,18 @@ services:
       - ./rabbitmq-data:/var/lib/rabbitmq
       - ./rabbitmq-logs:/var/log/rabbitmq
   mongodb:
-    image: 'mongo:latest'
-    hostname: mongodb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
-      - MONGO_INITDB_ROOT_PASSWORD=mongopassword
-    ports:
-      - "27017:27017"
-    volumes:
-      - './mongo-data:/data/db'
-      - './mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.sh'
-    networks:
-      - beautique-network
+  image: mongo:latest
+  hostname: mongodb
+  environment:
+    - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+    - MONGO_INITDB_ROOT_PASSWORD=mongopassword
+  ports:
+    - "27017:27017"
+  volumes:
+    - './mongo-data:/data/db'
+    - './mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro'
+  networks:
+    - beautique-network
 
 
 networks:
