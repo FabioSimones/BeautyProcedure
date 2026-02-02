@@ -78,3 +78,84 @@ Com o Docker Desktop em execução, entre na pasta entitulada de **docker**, abr
 ```bash
 docker compose up -d
 ```
+
+Após a inicialização, a infraestrutura foi validada utilizando o Beekeeper Studio, confirmando a correta execução e conexão com o banco de dados PostgreSQL.
+<img width="550" height="600" alt="image" src="https://github.com/user-attachments/assets/2e1002cb-6637-4637-a15a-2eaad699ec1b" />
+
+---
+
+## 🧱 Estrutura do Projeto
+
+O projeto segue o padrão de arquitetura em camadas, organizado da seguinte forma:
+
+- Configuration: Configurações do projeto, incluindo RabbitMQ.
+- Controllers: Camada responsável por expor os endpoints REST.
+- DTOs: Objetos de transferência de dados entre as camadas.
+- Entities: Representação das entidades do banco de dados.
+- Exceptions: Exceções personalizadas e tratamento de erros.
+- Repository: Camada de acesso e persistência de dados.
+- Services: Interfaces e implementações das regras de negócio.
+- Utils: Funções utilitárias reutilizáveis.
+
+---
+## 🗃️ Entidades do Sistema
+
+As principais entidades do domínio são:
+
+- AppointmentsEntity: Responsável por armazenar os agendamentos.
+- BaseEntity: Classe base que fornece campos comuns para outras entidades, sem gerar tabela no banco.
+- BeautyProceduresEntity: Representa os procedimentos estéticos oferecidos pelo salão.
+- CustomerEntity: Armazena os dados dos clientes.
+
+As entidades utilizam anotações do Spring Data JPA e Lombok, reduzindo código boilerplate e facilitando a manutenção.
+
+---
+## 🌐 APIs REST
+
+A API foi construída seguindo boas práticas REST, incluindo:
+
+- Versionamento de endpoints
+- Uso correto de códigos HTTP
+- Payloads bem definidos
+- Separação clara de responsabilidades
+
+---
+## 🚀 Tecnologias Utilizadas
+
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Spring Data MongoDB
+- Spring AMQP (RabbitMQ)
+- PostgreSQL
+- MongoDB
+- Docker
+- Docker Compose
+- Postman
+- Maven 3.5.9
+
+---
+## 🎯 Objetivos do Projeto
+
+- Aplicar CQRS na prática
+- Trabalhar com microsserviços
+- Implementar mensageria com RabbitMQ
+- Integrar PostgreSQL e MongoDB
+- Containerizar aplicações com Docker
+- Desenvolver APIs REST escaláveis e organizadas
+
+---
+## Alguns testes no Postman:
+
+<img width="900" height="600" alt="image" src="https://github.com/user-attachments/assets/c03d9cc9-0353-4fd7-975e-f295aea6311e" />
+
+<img width="900" height="600" alt="image" src="https://github.com/user-attachments/assets/358b4d79-08b3-4fe2-8a32-10bb2230c9c9" />
+
+<img width="900" height="600" alt="image" src="https://github.com/user-attachments/assets/585a748c-143d-42c6-9b74-2d10e9c87e68" />
+
+<img width="900" height="600" alt="image" src="https://github.com/user-attachments/assets/476df340-e49f-4d2f-a530-e40ce66d46af" />
+
+
+
+
+
