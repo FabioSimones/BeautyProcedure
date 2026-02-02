@@ -8,4 +8,5 @@ public interface BeautyProcedureService {
     List<BeautyProcedureDTO> listAllBeautyProcedure();
     List<BeautyProcedureDTO> listByNameIgnoreCase(String name);
     List<BeautyProcedureDTO> listByDescriptionIgnoreCase(String description);
+
 }
